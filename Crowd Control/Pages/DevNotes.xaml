@@ -1,0 +1,55 @@
+﻿<ui:UiPage x:Class="CrowdControl.Pages.DevNotes"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      d:DesignHeight="800"
+      d:DesignWidth="1200"
+      Style="{StaticResource UiPage}"
+      mc:Ignorable="d"
+      Title="Change Log"
+      Background="Transparent">
+    <Grid Margin="75">
+        <ui:SymbolIcon Symbol="Notebook32" Foreground="BlueViolet" FontSize="46" HorizontalAlignment="Left" Margin="10,-25,0,0" VerticalAlignment="Top" Height="67" Width="195" />
+        <Grid Margin="0,-25,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Padding="75,10,10,10" FontSize="32" Foreground="DarkSlateBlue">
+                Change Log
+            </TextBlock>
+            <TextBlock Grid.Row="1" Foreground="White" FontSize="21.2" Padding="10" FontStyle="Normal" FontWeight="Normal" LineHeight="40" TextWrapping="WrapWithOverflow">
+                This is where you can get all the latest details on the past and upcoming updates and all the features, changes, and bugs that were fixed or are planning to be fixed.
+            </TextBlock>
+        </Grid>
+        <Border CornerRadius="20" Name="Base" Margin="0,130,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <RichTextBox x:Name="RTB" IsReadOnly="True" ClipToBounds="True" Background="Transparent" BorderThickness="0">
+                    <FlowDocument FontFamily="Microsoft PhagsPa" TextAlignment="Left">
+                        <Section Padding="20">
+                            <!--
+                            <List>
+                                <ListItem>
+                                    <Paragraph FontSize="22" FontWeight="ExtraBold" Foreground="OrangeRed">
+                                       
+                                    </Paragraph>
+                                    <Paragraph FontSize="16" Padding="0,15">
+                                        
+                                    </Paragraph>
+                                </ListItem>
+                            </List-->
+                        </Section>
+                    </FlowDocument>
+                </RichTextBox>
+            </ScrollViewer>
+        </Border>
+        <ui:SymbolIcon Symbol="Bug24" FontSize="220" Margin="0,100,0,0">
+            <ui:SymbolIcon.RenderTransform>
+                <RotateTransform CenterX="110" CenterY="110" Angle="45"/>
+            </ui:SymbolIcon.RenderTransform>
+        </ui:SymbolIcon>
+        <TextBlock Text="Huh. Not much to see here..." Foreground="White" FontSize="40" TextAlignment="Center" Margin="0,531,0,0" VerticalAlignment="Bottom"/>
+    </Grid>
+</ui:UiPage>

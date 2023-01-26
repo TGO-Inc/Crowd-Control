@@ -1,0 +1,89 @@
+﻿<ui:UiPage x:Class="CrowdControl.Pages.Features"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      d:DesignHeight="800"
+      d:DesignWidth="1200"
+      Style="{StaticResource UiPage}"
+      mc:Ignorable="d"
+      Title="Planned Features">
+    <Grid Margin="75">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ui:SymbolIcon Symbol="Star48" FontSize="46" HorizontalAlignment="Left" Margin="10,-25,0,0" VerticalAlignment="Top" Height="67" Width="195" />
+        <Grid Grid.Row="0" Margin="0,-25,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Padding="75,10,10,10" FontSize="32" Foreground="Gold">
+                Planned Features!
+            </TextBlock>
+            <TextBlock Grid.Row="1" Foreground="White" FontSize="21.2" Padding="10" FontStyle="Normal" FontWeight="Normal" LineHeight="40" TextWrapping="WrapWithOverflow">
+                This section is dedicated to features that are currently planned for future releases and development
+                Not all features on this list are going to make it, nor are they in any particular order
+            </TextBlock>
+        </Grid>
+        <Border Grid.Row="1" CornerRadius="20" Name="Base" Margin="0" Background="#0CFFFFFF" >
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <RichTextBox x:Name="RTB" IsReadOnly="True" ClipToBounds="True" Background="Transparent" BorderThickness="0">
+                    <FlowDocument FontFamily="Microsoft PhagsPa" TextAlignment="Left">
+                        <Section Padding="20">
+                            <List>
+                                <ListItem>
+                                    <Paragraph FontSize="22" FontWeight="ExtraBold" Foreground="OrangeRed">
+                                        Partner Program
+                                    </Paragraph>
+                                    <Paragraph FontSize="16" Padding="0,15">
+                                        The partner program will be primarily for content creators as the plan right now is to take a
+                                        small percentage of the commands that require donations. The plan only includes support for paypal
+                                        (<Run FontStyle="Italic" Foreground="#66FFFFFF">atm</Run> )
+                                        that can be use to pay after the stream for
+                                        <Run Foreground="OrangeRed" FontStyle="Italic">ONLY</Run>
+                                        <Run></Run>
+                                        the donations that are coupled with commands.
+                                        The final percentage cut is unknown but is anywhere in the range of
+                                        <Run Foreground="Green">5%</Run> to
+                                        <Run Foreground="Green">25%</Run> . The application will still
+                                        be usable, however if there are commands you wish viewers must pay to use, you must pay for the previous
+                                        stream first.
+                                    </Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph FontSize="22" FontWeight="ExtraBold" Foreground="OrangeRed">
+                                        The Command Builder
+                                    </Paragraph>
+                                    <Paragraph FontSize="16" Padding="0,15">
+                                        The command builder will be a user friendly interface that should allow beginner, intermediate, and advanced
+                                        users to make their own custom commands which they can then use in their streams. The command builder will
+                                        allow for
+                                        <Run Foreground="Orchid">Lua</Run> ,
+                                        (<Run FontStyle="Italic" Foreground="#66FFFFFF">possibly</Run> )
+                                        a limited
+                                        <Run Foreground="LightGreen">C# API</Run> , and
+                                        <Run Foreground="Aqua">JSON</Run> primarily, and will guide you with visual representations.
+                                        You will be able to
+                                        <Run Foreground="CornflowerBlue">import</Run>/<Run Foreground="PaleGoldenrod">export</Run>/<Run Foreground="ForestGreen">save</Run>
+                                        these custom commands to share them, save them, etc.
+                                    </Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph FontSize="22" FontWeight="ExtraBold" Foreground="OrangeRed">
+                                        Other Stuff
+                                    </Paragraph>
+                                    <Paragraph FontSize="16" Padding="0,15">
+                                        This list is still in development and things are subject to change. Nothing is certain!
+                                    </Paragraph>
+                                </ListItem>
+                            </List>
+                        </Section>
+                    </FlowDocument>
+                </RichTextBox>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</ui:UiPage>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>C:\Users\Matthew\source\repos\Crowd Control\Crowd Control\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Pages\PartnerProgram.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\CreateNewProfile.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Windows\Main.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Dashboard.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Settings.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\Features.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\DevNotes.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\CommandBuilder.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\PartnerProgram.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\ConfirmDelete.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\CreateNewProfile.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\Main.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Dashboard.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Settings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

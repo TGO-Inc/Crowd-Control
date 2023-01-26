@@ -1,0 +1,405 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Matthew\\source\\repos\\Crowd Control\\Crowd Control\\Crowd Control.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Matthew\\source\\repos\\Crowd Control\\Crowd Control\\Crowd Control.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Matthew\\source\\repos\\Crowd Control\\Crowd Control\\Crowd Control.csproj",
+        "projectName": "Crowd Control",
+        "projectPath": "C:\\Users\\Matthew\\source\\repos\\Crowd Control\\Crowd Control\\Crowd Control.csproj",
+        "packagesPath": "C:\\Users\\Matthew\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matthew\\source\\repos\\Crowd Control\\Crowd Control\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0-windows7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Matthew\\.nuget\\packages": {},
+          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.pkg.github.com/TheGuy920/index.json": {}
+        },
+        "frameworks": {
+          "net6.0-windows7.0": {
+            "targetAlias": "net6.0-windows",
+            "projectReferences": {
+              "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj": {
+                "projectPath": "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "WPF-UI": {
+              "target": "Package",
+              "version": "[2.0.2, )"
+            },
+            "smSteamUtility": {
+              "target": "Package",
+              "version": "[1.0.4.9, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj",
+        "projectName": "StreamChatReader",
+        "projectPath": "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj",
+        "packagesPath": "C:\\Users\\Matthew\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Matthew\\.nuget\\packages": {},
+          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.pkg.github.com/TheGuy920/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj": {
+                "projectPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj"
+              },
+              "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\UltralightSharp.csproj": {
+                "projectPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\UltralightSharp.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    },
+    "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj": {
+      "version": "1.2.0-beta-r11",
+      "restore": {
+        "projectUniqueName": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj",
+        "projectName": "UltralightSharp.Core",
+        "projectPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj",
+        "packagesPath": "C:\\Users\\Matthew\\.nuget\\packages\\",
+        "outputPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "crossTargeting": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0",
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Matthew\\.nuget\\packages": {},
+          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.pkg.github.com/TheGuy920/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          },
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        },
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\UltralightSharp.csproj": {
+      "version": "1.2.0-beta-r11",
+      "restore": {
+        "projectUniqueName": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\UltralightSharp.csproj",
+        "projectName": "UltralightSharp",
+        "projectPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\UltralightSharp.csproj",
+        "packagesPath": "C:\\Users\\Matthew\\.nuget\\packages\\",
+        "outputPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp\\obj\\",
+        "projectStyle": "PackageReference",
+        "crossTargeting": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0",
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Matthew\\.nuget\\packages": {},
+          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.pkg.github.com/TheGuy920/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          },
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.2.4, )"
+            },
+            "InfoOf.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.1, )"
+            },
+            "InlineIL.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.5.0, )"
+            },
+            "JetBrains.Annotations": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2020.1.0, )"
+            },
+            "Microsoft.SourceLink.GitHub": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "ModuleInit.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        },
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.2.4, )"
+            },
+            "InfoOf.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.1, )"
+            },
+            "InlineIL.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.5.0, )"
+            },
+            "JetBrains.Annotations": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2020.1.0, )"
+            },
+            "Microsoft.SourceLink.GitHub": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "ModuleInit.Fody": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

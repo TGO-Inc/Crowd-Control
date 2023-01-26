@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Crowd Control": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

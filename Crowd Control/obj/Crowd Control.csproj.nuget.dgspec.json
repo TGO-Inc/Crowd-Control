@@ -22,18 +22,17 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0-windows"
+          "net7.0-windows"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "C:\\Users\\Matthew\\.nuget\\packages\\": {},
-          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0-windows7.0": {
-            "targetAlias": "net6.0-windows",
+          "net7.0-windows7.0": {
+            "targetAlias": "net7.0-windows",
             "projectReferences": {
               "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj": {
                 "projectPath": "C:\\Users\\Matthew\\source\\repos\\StreamChatReader\\StreamChatReader\\StreamChatReader.csproj"
@@ -48,16 +47,16 @@
         }
       },
       "frameworks": {
-        "net6.0-windows7.0": {
-          "targetAlias": "net6.0-windows",
+        "net7.0-windows7.0": {
+          "targetAlias": "net7.0-windows",
           "dependencies": {
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[13.0.1, )"
+              "version": "[13.0.2, )"
             },
             "WPF-UI": {
               "target": "Package",
-              "version": "[2.0.2, )"
+              "version": "[2.0.3, )"
             },
             "smSteamUtility": {
               "target": "Package",
@@ -105,18 +104,17 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net7.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "C:\\Users\\Matthew\\.nuget\\packages\\": {},
-          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net7.0": {
+            "targetAlias": "net7.0",
             "projectReferences": {
               "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj": {
                 "projectPath": "E:\\Documents\\GitHub\\UltralightSharp\\UltralightSharp.Core\\UltralightSharp.Core.csproj"
@@ -134,12 +132,12 @@
         }
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "dependencies": {
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[13.0.1, )"
+              "version": "[13.0.2, )"
             }
           },
           "imports": [
@@ -193,7 +191,6 @@
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "C:\\Users\\Matthew\\.nuget\\packages\\": {},
-          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -281,7 +278,6 @@
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "C:\\Users\\Matthew\\.nuget\\packages\\": {},
-          "E:\\Documents\\GitHub\\runtimelab\\artifacts\\packages\\Debug\\Shipping": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

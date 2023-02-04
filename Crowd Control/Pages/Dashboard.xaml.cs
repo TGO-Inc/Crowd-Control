@@ -80,6 +80,7 @@ namespace CrowdControl.Pages
         }
         private void ChatEvent(ChatEventArgs e)
         {
+            Debug.WriteLine(e.Message);
             if(this.CanReadChat) this.ChatCommandHandler.ParseCommand(e);
         }
         private void ChatLoaded(ChatLoadedArgs e)

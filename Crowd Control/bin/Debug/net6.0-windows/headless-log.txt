@@ -1,6 +1,6 @@
 > Initializing Ultralight v1.2.0 with the following configuration
     resource_path: C:\Users\Matthew\source\repos\Crowd Control\Crowd Control\bin\Debug\net6.0-windows\resources
-    cache_path: C:\Users\Matthew\AppData\Local\Temp\d1710b5a-af7a-4ee3-87e1-b1818f48d87b\Cache
+    cache_path: C:\Users\Matthew\AppData\Local\Temp\70787741-dd88-4fd5-a986-0840fb4b08fc\Cache
     use_gpu_renderer: 0
     device_scale: 1
     face_winding: CounterClockwise
@@ -25,14 +25,14 @@
     is_persistent: 1
     name: default
     is_default: 1
-    disk_path: C:\Users\Matthew\AppData\Local\Temp\d1710b5a-af7a-4ee3-87e1-b1818f48d87b\Cache\default (you can adjust this location in Config::cache_path)
+    disk_path: C:\Users\Matthew\AppData\Local\Temp\70787741-dd88-4fd5-a986-0840fb4b08fc\Cache\default (you can adjust this location in Config::cache_path)
 
 > Creating Session with the following configuration:
     id: 9223372036854775810
     is_persistent: 0
     name: StreamSession
     is_default: 0
-    disk_path: C:\Users\Matthew\AppData\Local\Temp\d1710b5a-af7a-4ee3-87e1-b1818f48d87b\Cache\StreamSession (you can adjust this location in Config::cache_path)
+    disk_path: C:\Users\Matthew\AppData\Local\Temp\70787741-dd88-4fd5-a986-0840fb4b08fc\Cache\StreamSession (you can adjust this location in Config::cache_path)
 
 > Creating View with the following configuration:
     width: 1

@@ -26,6 +26,6 @@
     </Content>
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgWPF-UI Condition=" '$(PkgWPF-UI)' == '' ">C:\Users\Matthew\.nuget\packages\wpf-ui\2.0.2</PkgWPF-UI>
+    <PkgWPF-UI Condition=" '$(PkgWPF-UI)' == '' ">C:\Users\Matthew\.nuget\packages\wpf-ui\2.0.3</PkgWPF-UI>
   </PropertyGroup>
 </Project>

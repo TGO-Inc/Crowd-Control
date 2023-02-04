@@ -63,9 +63,9 @@ namespace CrowdControl.ChatHandler
             this.JsonPipeThread.RunWorkerAsync();
         }
         public List<ChatCommand> GetValidCommands() => this.ValidCommands.Commands;
-        private async void JsonPipe(object? sender, DoWorkEventArgs e)
+        private void JsonPipe(object? sender, DoWorkEventArgs e)
         {
-            BackgroundWorker bgw = sender as BackgroundWorker;
+            BackgroundWorker bgw = (sender as BackgroundWorker)!;
             while (!bgw.CancellationPending)
             {
                 if (this.ChatCommands.Count > 0)

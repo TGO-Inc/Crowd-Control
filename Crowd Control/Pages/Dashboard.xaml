@@ -157,7 +157,7 @@
                     </WrapPanel>
                 </ScrollViewer>
             </Border>
-            <ui:Button Grid.Row="4" Content="TEST" Margin="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto" Click="Button_Click"/>
+            <!--<ui:Button Grid.Row="4" Content="TEST" Margin="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="Auto" Click="Button_Click"/>-->
         </Grid>
     </Grid>
 </ui:UiPage>

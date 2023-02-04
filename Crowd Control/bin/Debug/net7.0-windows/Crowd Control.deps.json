@@ -10,7 +10,7 @@
         "dependencies": {
           "Newtonsoft.Json": "13.0.2",
           "StreamChatReader": "1.0.0",
-          "WPF-UI": "2.0.2",
+          "WPF-UI": "2.0.3",
           "smSteamUtility": "1.0.4.9"
         },
         "runtime": {
@@ -92,14 +92,14 @@
           "Microsoft.Win32.SystemEvents": "6.0.0"
         }
       },
-      "WPF-UI/2.0.2": {
+      "WPF-UI/2.0.3": {
         "dependencies": {
           "System.Drawing.Common": "6.0.0"
         },
         "runtime": {
           "lib/net6.0-windows7.0/Wpf.Ui.dll": {
-            "assemblyVersion": "2.0.2.0",
-            "fileVersion": "2.0.2.0"
+            "assemblyVersion": "2.0.3.0",
+            "fileVersion": "2.0.3.0"
           }
         }
       },
@@ -166,12 +166,12 @@
       "path": "system.drawing.common/6.0.0",
       "hashPath": "system.drawing.common.6.0.0.nupkg.sha512"
     },
-    "WPF-UI/2.0.2": {
+    "WPF-UI/2.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Nj2Viy7dbqin4L//9c99wo2cYOT90uG2k1JAGnXbnbvKAOAbERwGxIm3sAKziB21RP9hKW/Z2jurAsZ4Xu0Tkg==",
-      "path": "wpf-ui/2.0.2",
-      "hashPath": "wpf-ui.2.0.2.nupkg.sha512"
+      "sha512": "sha512-1e9Q8pQGfi9YFp3WavKZjXyLYohIjXxk5q0NqEaamofVgIdxRxwqrkWha584FBUISRBBT/qFOrl97YBl5bs30Q==",
+      "path": "wpf-ui/2.0.3",
+      "hashPath": "wpf-ui.2.0.3.nupkg.sha512"
     },
     "StreamChatReader/1.0.0": {
       "type": "project",

@@ -75,7 +75,7 @@ namespace CrowdControl.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Crowd Control;V1.0.0.0;component/pages/features.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Crowd Control;component/pages/features.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Pages\Features.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

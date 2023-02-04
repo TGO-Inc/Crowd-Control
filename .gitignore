@@ -32,3 +32,7 @@
 *.app
 *.vsidx
 *.vsidx
+
+Crowd Control\obj\*
+Crowd Control\bin\*
+.vs\*

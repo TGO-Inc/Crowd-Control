@@ -59,7 +59,7 @@ namespace CrowdControl {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Crowd Control;V1.0.0.0;component/windows/confirmdelete.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Crowd Control;component/windows/confirmdelete.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Windows\ConfirmDelete.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

@@ -1,6 +1,7 @@
 Crowd Control/obj/
 Crowd Control/bin/
 .vs/
+.vscode/
 
 *.user
 # Prerequisites

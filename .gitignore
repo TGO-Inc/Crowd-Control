@@ -2,6 +2,7 @@ Crowd Control/obj/
 Crowd Control/bin/
 .vs/
 
+*.user
 # Prerequisites
 *.d
 

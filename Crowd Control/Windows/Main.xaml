@@ -16,9 +16,12 @@
         AllowsTransparency="True"
         Closed="UiWindow_Closed"
         MinHeight="475" MinWidth="770"
-        Width="1200" Height="800"
-        StateChanged="UiWindow_StateChanged">
-    <Grid>
+        Width="1085" Height="800"
+        StateChanged="UiWindow_StateChanged"
+        MouseMove="UiWindow_MouseMove"
+        MouseUp="UiWindow_MouseUp"
+        MouseLeave="UiWindow_MouseLeave">
+    <Grid Background="#01ffffff">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

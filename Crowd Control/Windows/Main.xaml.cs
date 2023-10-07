@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrowdControl.Pages;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -44,17 +45,39 @@ namespace CrowdControl
         {
             if(this.WindowState.Equals(WindowState.Maximized))
             {
-                (this.Content as Grid).Margin = new(10);
+                (this.Content as Grid)!.Margin = new(10);
             }
             else
             {
-                (this.Content as Grid).Margin = new(0);
+                (this.Content as Grid)!.Margin = new(0);
             }
         }
 
         private void RootNavigation_OnNavigated(Wpf.Ui.Controls.Interfaces.INavigation sender, RoutedNavigationEventArgs e)
         {
 
+        }
+
+        private void UiWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.RootFrame.Content is Dashboard)
+            {
+                var dash = this.RootFrame.Content as Dashboard;
+                dash!.InvokeMouseMove(e);
+            }
+        }
+        private void UiWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.UiWindow_MouseUp(sender, null);
+        }
+        
+        private void UiWindow_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (this.RootFrame.Content is Dashboard)
+            {
+                var dash = this.RootFrame.Content as Dashboard;
+                dash!.InvokeMouseUp(e);
+            }
         }
     }
 }

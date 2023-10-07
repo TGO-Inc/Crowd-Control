@@ -88,7 +88,7 @@ namespace CrowdControl.ChatHandler
         {
             JObject j = new()
             {
-                ["type"] = _j.Value.Command.ToLower(),
+                ["command"] = _j.Value.Command.ToLower(),
                 ["id"] = _j.Key.ChatId,
                 ["params"] = _j.Value.Arguments.ToJToken(),
                 ["username"] = _j.Key.Author.Name,
@@ -124,7 +124,7 @@ namespace CrowdControl.ChatHandler
             }
             return false;
         }
-        private bool ValidateCommand(ChatCommand start, ChatEventArgs e, string[] message_peices, out ChatCommand? command)
+        private bool ValidateCommand(ChatCommand start, ChatEventArgs e, string[] message_peices, out ChatCommand? command) 
         {
             string user_command = message_peices[0].ToLower();
             if (start.ValidCommands is null || start.ValidCommands.Count == 0 || start.ValidCommands.Contains(user_command))
@@ -278,6 +278,19 @@ namespace CrowdControl.ChatHandler
             if (this.ProfileName.EndsWith('*'))
                 this.ProfileName = this.ProfileName[..(this.ProfileName.Length - 1)];
         }
+        public void ReOrderCommand(ChatCommand command, int NewIndex)
+        {
+            this.ReOrderCommand(this.ValidCommands.Commands.IndexOf(command), NewIndex);
+        }
+        public void ReOrderCommand(int OldIndex, int NewIndex)
+        {
+            if (OldIndex >= 0)
+            {
+                var oldCommand = this.ValidCommands.Commands[OldIndex];
+                this.ValidCommands.Commands.RemoveAt(OldIndex);
+                this.ValidCommands.Commands.Insert(NewIndex, oldCommand);
+            }
+        }
         public void SaveToFile()
         {
             if (!this.ProfileName.Equals("Default")) File.WriteAllText(Path.Combine(this.ProfileDir.FullName, this.ProfileName + ".sm.config.json"), JsonConvert.SerializeObject(this.ValidCommands));
@@ -287,7 +300,7 @@ namespace CrowdControl.ChatHandler
             string f = Path.Combine(this.ProfileDir.FullName, this.ProfileName + ".sm.config.json");
             if (File.Exists(f)) File.Delete(f);
         }
-        public static ChatCommandHandler? LoadFromFile(Action PropertiesChanged, string ProfileName = "Default")
+        public static ChatCommandHandler LoadFromFile(Action PropertiesChanged, string ProfileName = "Default")
         {
             string name = ProfileName;
             if (name.EndsWith('*'))
@@ -301,7 +314,7 @@ namespace CrowdControl.ChatHandler
                 string content = File.ReadAllText(Path.Combine(ProfileDir.FullName, name));
                 try
                 {
-                    return new(PropertiesChanged, JsonConvert.DeserializeObject<ChatCommands>(content));
+                    return new(PropertiesChanged, JsonConvert.DeserializeObject<ChatCommands>(content)!);
                 }
                 catch
                 {

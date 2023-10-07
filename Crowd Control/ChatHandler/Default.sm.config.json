@@ -23,38 +23,6 @@
 			"arguments": null
 		},
 		{
-			"command": "blast",
-			"commandNames": [
-				"blast"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
-		},
-		{
-			"command": "fast",
-			"commandNames": [
-				"fast"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
-		},
-		{
 			"command": "give",
 			"commandNames": [
 				"give"
@@ -123,140 +91,9 @@
 			"arguments": null
 		},
 		{
-			"command": "kit",
-			"commandNames": [
-				"kit"
-			],
-			"commandTag": "base",
-			"timeout": 0,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": [
-				{
-					"command": "mechanic",
-					"commandNames": [
-						"mechanic",
-						"meme",
-						"pipe",
-						"starter",
-						"food",
-						"seed"
-					],
-					"commandTag": "optional",
-					"timeout": 30,
-					"enabled": true,
-					"member_or_pay": {
-						"price": 0,
-						"donation_type": "USD",
-						"member_only": false,
-						"member_duration": 0
-					},
-					"arguments": null
-				}
-			]
-		},
-		{
 			"command": "raid",
 			"commandNames": [
 				"raid"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
-		},
-		{
-			"command": "rain",
-			"commandNames": [
-				"rain"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
-		},
-		{
-			"command": "shield",
-			"commandNames": [
-				"sheild"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
-		},
-		{
-			"command": "slap",
-			"commandNames": [
-				"slap"
-			],
-			"commandTag": "base",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": [
-				{
-					"command": "position",
-					"commandNames": [
-						"front",
-						"back",
-						"forward",
-						"backward",
-						"right",
-						"left",
-						"down",
-						"up",
-						"west",
-						"east",
-						"south",
-						"north",
-						"random"
-					],
-					"commandTag": "optional",
-					"timeout": 0,
-					"enabled": true,
-					"member_or_pay": {
-						"price": 0,
-						"donation_type": "USD",
-						"member_only": false,
-						"member_duration": 0
-					},
-					"arguments": null
-				}
-			]
-		},
-		{
-			"command": "slow",
-			"commandNames": [
-				"slow"
 			],
 			"commandTag": "base",
 			"timeout": 30,
@@ -307,22 +144,6 @@
 					"arguments": null
 				}
 			]
-		},
-		{
-			"command": "trip",
-			"commandNames": [
-				"trip"
-			],
-			"commandTag": "optional",
-			"timeout": 30,
-			"enabled": true,
-			"member_or_pay": {
-				"price": 0,
-				"donation_type": "USD",
-				"member_only": false,
-				"member_duration": 0
-			},
-			"arguments": null
 		},
 		{
 			"command": "import",

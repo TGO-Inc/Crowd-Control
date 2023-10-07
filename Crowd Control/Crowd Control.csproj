@@ -7,7 +7,15 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>CrowdControl.App</StartupObject>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+    <Page Remove="NewFolder\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="AssemblyInfo.cs" />
@@ -15,10 +23,16 @@
 
   <ItemGroup>
     <None Remove="ChatHandler\Default.sm.config.json" />
+    <None Remove="ChatHandler\SaltySeraph.sm.config.json" />
+    <None Remove="LuaCommands\Default.lua" />
+    <None Remove="LuaCommands\SaltySeraph.lua" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="ChatHandler\Default.sm.config.json" />
+    <EmbeddedResource Include="ChatHandler\SaltySeraph.sm.config.json" />
+    <EmbeddedResource Include="LuaCommands\Default.lua" />
+    <EmbeddedResource Include="LuaCommands\SaltySeraph.lua" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Brushes = System.Windows.Media.Brushes;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace CrowdControl.Pages
 {
@@ -27,6 +28,12 @@ namespace CrowdControl.Pages
         private bool ShowInfo = false;
         private bool IsLoadingProfile = true;
         private bool CanReadChat = false;
+        #region CardHandler
+        private Card? MovingCard;
+        private System.Windows.Point Offset;
+        private int MovingCardIndex;
+        private int StartIndex;
+        #endregion
         public Dashboard()
         {
             InitializeComponent();
@@ -37,15 +44,16 @@ namespace CrowdControl.Pages
                 throw new Exception("Failed to load commands");
 
             foreach (ChatCommand e in this.ChatCommandHandler.GetValidCommands())
-                this.CommandWrap.Children.Add(e);
+                this.BuildCards(e);
 
             foreach(string profile in this.ChatCommandHandler.LoadProfiles())
                 this.ProfileComboBox.Items.Insert(this.ProfileComboBox.Items.Count - 1, new ComboBoxItem() { Content = profile });
 
             this.SteamName.Text = this.ChatCommandHandler.SteamHandler.UserName;
+#if !DEBUG
             this.ChatCommandHandler.SteamHandler.LoadAvatars();
             this.Avatar.Source = ImageSourceFromBitmap(this.ChatCommandHandler.SteamHandler.LargeAvatar);
-
+#endif
             this.IsLoadingProfile = false;
         }
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
@@ -80,7 +88,6 @@ namespace CrowdControl.Pages
         }
         private void ChatEvent(ChatEventArgs e)
         {
-            Debug.WriteLine(e.Message);
             if(this.CanReadChat) this.ChatCommandHandler.ParseCommand(e);
         }
         private void ChatLoaded(ChatLoadedArgs e)
@@ -91,7 +98,7 @@ namespace CrowdControl.Pages
                     Symbol = Wpf.Ui.Common.SymbolRegular.CheckboxChecked24,
                     FontSize = 20,
                     IsEnabled = false,
-                    Foreground = System.Windows.Media.Brushes.Green
+                    Foreground = Brushes.Green
                 };
             });
         }
@@ -125,6 +132,13 @@ namespace CrowdControl.Pages
             this.ChatCommandHandler.SetProfileName(item.Content.ToString());
             this.ChatCommandHandler.SaveToFile();
         }
+        private void BuildCards(ChatCommand e)
+        {
+            Card c = e.ToCard();
+            c.MouseDown += Card_MouseDown;
+            c.MouseUp += Card_MouseUp;
+            this.CommandWrap.Children.Add(c);
+        }
         private void LoadProfile(object sender, RoutedEventArgs e)
         {
             bool prev_state = this.CanReadChat;
@@ -149,9 +163,9 @@ namespace CrowdControl.Pages
                 }
                 foreach (ChatCommand k in l)
                 {
-                    var t = this.CommandWrap.Dispatcher.BeginInvoke(() => { this.CommandWrap.Children.Add(k); });
+                    var t = this.CommandWrap.Dispatcher.BeginInvoke(() => { this.BuildCards(k); });
                     t.Priority = System.Windows.Threading.DispatcherPriority.Background;
-                    Task.Delay(75).Wait();
+                    Task.Delay(100).Wait();
                 }
                 Task.Delay(100).Wait();
                 this.Dispatcher.BeginInvoke(() =>
@@ -216,19 +230,119 @@ namespace CrowdControl.Pages
         }
         private void EnableChatReader(object sender, RoutedEventArgs e)
         {
-            (this.EnableReadChat.Content as SymbolIcon).Symbol = Wpf.Ui.Common.SymbolRegular.CheckboxChecked24;
-            (this.EnableReadChat.Content as SymbolIcon).Foreground = Brushes.Green;
+            this.GameConnectStatus.Visibility = Visibility.Collapsed;
+            //this.GameConnectStatus.Symbol = Wpf.Ui.Common.SymbolRegular.CheckboxChecked24;
+            //this.GameConnectStatus.Foreground = Brushes.Green;
+            this.GameConnectLoading.Visibility= Visibility.Visible;
             this.CanReadChat = true;
         }
         private void DisableChatReader(object sender, RoutedEventArgs e)
         {
-            (this.EnableReadChat.Content as SymbolIcon).Symbol = Wpf.Ui.Common.SymbolRegular.ErrorCircle24;
-            (this.EnableReadChat.Content as SymbolIcon).Foreground = Brushes.Red;
+            this.GameConnectStatus.Symbol = Wpf.Ui.Common.SymbolRegular.ErrorCircle24;
+            this.GameConnectStatus.Foreground = Brushes.Red;
             this.CanReadChat = false;
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.ChatCommandHandler.Test();
+        }
+        private void Card_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.MovingCard = (sender as Card)!;
+            this.MovingCardIndex = this.CommandWrap.Children.IndexOf(this.MovingCard) + 1;
+            this.StartIndex = this.MovingCardIndex - 1;
+            this.Offset = e.MouseDevice.GetPosition(this.MovingCard);
+            if (this.MovingCardShadow.Parent != null)
+                (this.MovingCardShadow.Parent as Panel)!.Children.Remove(this.MovingCardShadow);
+            this.MovingCardShadow.Visibility= Visibility.Visible;
+            
+            var b = (this.MovingCardShadow.Content as Border)!;
+            b.Height = this.MovingCard.ActualHeight - 35;
+            b.Width = this.MovingCard.ActualWidth - 30;
+
+            var p = (this.MovingCard.Content as Panel);
+            p!.Width = p.ActualWidth;
+
+            this.CommandWrap.Children.Insert(this.MovingCardIndex, this.MovingCardShadow);
+            this.CommandWrap.Children.Remove(this.MovingCard);
+            
+            this.MovingCard.HorizontalAlignment = HorizontalAlignment.Left;
+            this.MovingContainer.Children.Add(this.MovingCard);
+        }
+        private void Card_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (this.MovingCard is not null)
+            {
+                this.MovingCardShadow.Visibility = Visibility.Collapsed;
+
+                this.MovingContainer.Children.Remove(this.MovingCard);
+                this.MovingCard!.Margin = new(20, 20, 0, 0);
+                this.MovingCard.HorizontalAlignment = HorizontalAlignment.Stretch;
+                (this.MovingCard.Content as Panel)!.Width = Double.NaN;
+                int ind = this.CommandWrap.Children.IndexOf(this.MovingCardShadow);
+                this.CommandWrap.Children.Insert(ind, this.MovingCard);
+                this.CommandWrap.Children.Remove(this.MovingCardShadow);
+                this.CommandWrap.Children.Add(this.MovingCardShadow);
+                this.ChatCommandHandler.ReOrderCommand(this.StartIndex, ind);
+                this.MovingCard = null;
+                this.PropertiesChanged();
+            }
+        }
+        public void InvokeMouseUp(MouseButtonEventArgs e)
+        {
+            this.Card_MouseUp(null, e);
+        }
+        public void InvokeMouseMove(MouseEventArgs e)
+        {
+            if (this.MovingCard != null)
+            {
+                var off = e.GetPosition(this.MovingCard);
+
+                double horiz_count = Math.Floor(this.CommandWrap.ActualWidth / this.MovingCard.ActualWidth);
+                double horiz_pos = Math.Floor((this.MovingCard.Margin.Left + (this.MovingCard.ActualWidth/2)) / this.MovingCard.ActualWidth);
+
+                var sv = (this.CommandWrap.Parent as ScrollViewer);
+                double vert_count = Math.Floor(sv.ActualHeight / this.MovingCard.ActualHeight);
+                double vert_pos = Math.Floor((this.MovingCard.Margin.Top + (this.MovingCard.ActualHeight / 2)) / this.MovingCard.ActualHeight);
+                vert_pos += Math.Floor(sv.VerticalOffset / this.MovingCard.ActualHeight);
+
+                var npos = (vert_pos * horiz_count) + horiz_pos;
+                if (this.MovingCardShadow.Tag != npos.ToString())
+                {
+                    this.CommandWrap.Children.Remove(this.MovingCardShadow);
+                    if (npos > this.CommandWrap.Children.Count)
+                    {
+                        this.CommandWrap.Children.Add(this.MovingCardShadow);
+                    }
+                    else
+                    {
+                        this.CommandWrap.Children.Insert((int)npos, this.MovingCardShadow);
+                    }
+                    this.MovingCardShadow.Tag = npos.ToString();
+                }
+
+                var diff = off - this.Offset;
+                var nx = Math.Max(0, this.MovingCard.Margin.Left + diff.X);
+                var ny = Math.Max(0, this.MovingCard.Margin.Top + diff.Y);
+                nx = Math.Min(this.MovingContainer.ActualWidth - this.MovingCard.ActualWidth, nx);
+                var bottom = this.MovingContainer.ActualHeight - (this.MovingCard.ActualHeight + 1);
+                ny = Math.Min(bottom, ny);
+                
+                if (bottom - ny < 5)
+                {
+                    //var sv = (this.CommandWrap.Parent as ScrollViewer);
+                    sv!.ScrollToVerticalOffset(sv.VerticalOffset + 1);
+                    ny = bottom - 6;
+                }
+                if (ny < 5)
+                {
+                    //var sv = (this.CommandWrap.Parent as ScrollViewer);
+                    sv!.ScrollToVerticalOffset(sv.VerticalOffset - 1);
+                    ny = 6;
+                }
+
+                this.MovingCard.Margin = new(nx, ny, 0, 0);
+            }
         }
     }
 }

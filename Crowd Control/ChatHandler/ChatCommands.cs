@@ -69,6 +69,40 @@ namespace CrowdControl.ChatHandler
         private bool InitSelf = false;
         private int SelfLevel = 0;
         private Action? callback;
+        private static readonly Dictionary<Key, char> NumberKeys = new()
+        {
+            { Key.D0, '0' },
+            { Key.D1, '1' },
+            { Key.D2, '2' },
+            { Key.D3, '3' },
+            { Key.D4, '4' },
+            { Key.D5, '5' },
+            { Key.D6, '6' },
+            { Key.D7, '7' },
+            { Key.D8, '8' },
+            { Key.D9, '9' },
+            { Key.NumPad0, '0' },
+            { Key.NumPad1, '1' },
+            { Key.NumPad2, '2' },
+            { Key.NumPad3, '3' },
+            { Key.NumPad4, '4' },
+            { Key.NumPad5, '5' },
+            { Key.NumPad6, '6' },
+            { Key.NumPad7, '7' },
+            { Key.NumPad8, '8' },
+            { Key.NumPad9, '9' },
+            { Key.OemPeriod, '.' },
+            { Key.Decimal, '.' },
+            { Key.OemComma, ',' }
+        };
+        private static readonly Key[] IndexResetKeys = new Key[]
+        {
+            Key.Delete,
+            Key.Back
+        };
+        private readonly string DecimalRegex = @"^\-?(\d+(?:[\.\,]|[\.\,]\d+)?)?$";
+        private readonly string IntRegex = @"[0-9]+";
+        //private string 
 
         [Newtonsoft.Json.JsonConstructor]
         public ChatCommand()
@@ -76,8 +110,8 @@ namespace CrowdControl.ChatHandler
             this.Command = string.Empty;
             this.MemberOrPay = new();
             this.Arguments = new();
-            Application.Current.Dispatcher.Invoke(() => { this.Self = new(); });
             this.ValidCommands = new();
+            Application.Current.Dispatcher.Invoke(() => { this.Self = new(); });
         }
         public override string ToString()
         {
@@ -110,7 +144,7 @@ namespace CrowdControl.ChatHandler
             Thickness StackMargin = new(0);
             Thickness S2tackMargin = new(0);
             Thickness ArgMargin = new(0, 15, 0, 0);
-            Thickness BaseMargin = new(20,20,0,20);
+            Thickness BaseMargin = new(20,20,0,0);
             double BaseWidth = 300;
             if (this.SelfLevel > 0)
             {
@@ -145,63 +179,67 @@ namespace CrowdControl.ChatHandler
             CommandInfo.Children.Add(CommandSwitch);
             MainStack.Children.Add(CommandInfo);
             MainStack.Children.Add(Spacer);
-            DockPanel ValidCommands = new();
-            Card ValidCommandsContainer = new() { Margin = S2tackMargin };
-            StackPanel ValidCommandsPanel = new();
-            if (this.ValidCommands is not null && this.ValidCommands.Count > 0)
+            
+            if (false)
             {
-                foreach (var ksp in this.ValidCommands)
+                DockPanel ValidCommands = new();
+                Card ValidCommandsContainer = new() { Margin = S2tackMargin };
+                StackPanel ValidCommandsPanel = new();
+                if (this.ValidCommands is not null && this.ValidCommands.Count > 0)
                 {
-                    TextBox tb = new()
+                    foreach (var ksp in this.ValidCommands)
                     {
-                        Text = ksp,
-                        Foreground = Brushes.Yellow,
-                        Margin = new(-10, -10, -10, 20),
+                        TextBox tb = new()
+                        {
+                            Text = ksp,
+                            Foreground = Brushes.Yellow,
+                            Margin = new(-10, -10, -10, 20),
+                            FontSize = 14
+                        };
+                        tb.TextChanged += ValidCommandsChanged;
+                        ValidCommandsPanel.Children.Add(tb);
+                    }
+                    Wpf.Ui.Controls.Button AddCommand = new()
+                    {
+                        Content = "+",
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        Margin = new(-10),
                         FontSize = 14
                     };
-                    tb.TextChanged += ValidCommandsChanged;
-                    ValidCommandsPanel.Children.Add(tb);
+                    AddCommand.Click += AddCommandClick;
+                    ValidCommandsPanel.Children.Add(AddCommand);
                 }
-                Wpf.Ui.Controls.Button AddCommand = new()
+                else
                 {
-                    Content = "+",
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Margin = new(-10),
-                    FontSize = 14
-                };
-                AddCommand.Click += AddCommandClick;
-                ValidCommandsPanel.Children.Add(AddCommand);
+                    DockPanel x = new() { Margin = new(0) };
+                    TextBlock h = new()
+                    {
+                        Text = "ANY",
+                        Foreground = Brushes.LightYellow,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new(0),
+                        FontSize = 14
+                    };
+                    x.Children.Add(h);
+                    Wpf.Ui.Controls.Button v = new()
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        FontSize = 10,
+                        Background = Brushes.Transparent,
+                        Foreground = Brushes.Red,
+                        Margin = new(0),
+                        Width = 30,
+                        Height = 30,
+                        Content = "X"
+                    };
+                    v.Click += RemoveAnyClick;
+                    x.Children.Add(v);
+                    ValidCommandsPanel.Children.Add(x);
+                }
+                ValidCommandsContainer.Content = ValidCommandsPanel;
+                ValidCommands.Children.Add(ValidCommandsContainer);
+                MainStack.Children.Add(ValidCommands);
             }
-            else
-            {
-                DockPanel x = new() { Margin = new(0) };
-                TextBlock h = new()
-                {
-                    Text = "ANY",
-                    Foreground = Brushes.LightYellow,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new(0),
-                    FontSize = 14
-                };
-                x.Children.Add(h);
-                Wpf.Ui.Controls.Button v = new()
-                {
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    FontSize = 10,
-                    Background = Brushes.Transparent,
-                    Foreground = Brushes.Red,
-                    Margin = new(0),
-                    Width = 30,
-                    Height = 30,
-                    Content = "X"
-                };
-                v.Click += RemoveAnyClick;
-                x.Children.Add(v);
-                ValidCommandsPanel.Children.Add(x);
-            }
-            ValidCommandsContainer.Content = ValidCommandsPanel;
-            ValidCommands.Children.Add(ValidCommandsContainer);
-            MainStack.Children.Add(ValidCommands);
             DockPanel MemberMode = new();
             ToggleSwitch ToggleMemeberMode = new()
             {
@@ -227,7 +265,7 @@ namespace CrowdControl.ChatHandler
                 IsReadOnly = false,
                 IntegersOnly = false,
                 DecimalPlaces = 2,
-                Step = 0.1,
+                Step = 1,
                 MaxWidth = 180,
                 MinWidth = 180,
                 TextAlignment = TextAlignment.Right,
@@ -270,7 +308,7 @@ namespace CrowdControl.ChatHandler
             });
             Timeout.Children.Add(TimeoutNumber);
             MainStack.Children.Add(Timeout);
-            if (this.Arguments is not null)
+            if (this.Arguments is not null && false)
             {
                 StackPanel CardContent = new() { Margin = new(-15) };
                 foreach (ChatCommand arg in this.Arguments)
@@ -391,39 +429,6 @@ namespace CrowdControl.ChatHandler
             parent.Children.Insert(parent.Children.Count - 1, tb);
             this.ValidCommands.Add(string.Empty);
         }
-        private static readonly Dictionary<Key, char> NumberKeys = new()
-        {
-            { Key.D0, '0' },
-            { Key.D1, '1' },
-            { Key.D2, '2' },
-            { Key.D3, '3' },
-            { Key.D4, '4' },
-            { Key.D5, '5' },
-            { Key.D6, '6' },
-            { Key.D7, '7' },
-            { Key.D8, '8' },
-            { Key.D9, '9' },
-            { Key.NumPad0, '0' },
-            { Key.NumPad1, '1' },
-            { Key.NumPad2, '2' },
-            { Key.NumPad3, '3' },
-            { Key.NumPad4, '4' },
-            { Key.NumPad5, '5' },
-            { Key.NumPad6, '6' },
-            { Key.NumPad7, '7' },
-            { Key.NumPad8, '8' },
-            { Key.NumPad9, '9' },
-            { Key.OemPeriod, '.' },
-            { Key.Decimal, '.' },
-            { Key.OemComma, ',' }
-        };
-        private static readonly Key[] IndexResetKeys = new Key[]
-        {
-            Key.Delete,
-            Key.Back
-        };
-        private readonly string DecimalRegex = @"^\-?(\d+(?:[\.\,]|[\.\,]\d+)?)?$";
-        private readonly string IntRegex = @"[0-9]+";
         private void PriceKeyDown(object sender, KeyEventArgs e)
         {
             var nb = sender as NumberBox;

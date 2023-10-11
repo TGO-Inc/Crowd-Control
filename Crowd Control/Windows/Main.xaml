@@ -21,7 +21,7 @@
         MouseMove="UiWindow_MouseMove"
         MouseUp="UiWindow_MouseUp"
         MouseLeave="UiWindow_MouseLeave">
-    <Grid Background="#01ffffff">
+    <Grid Background="#33000000">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

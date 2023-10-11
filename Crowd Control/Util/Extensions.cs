@@ -24,6 +24,17 @@ namespace CrowdControl.Extensions
             }
             return ret;
         }
+        public static JToken ToJToken<TKey, TValue>(this Dictionary<TKey, TValue> c, bool _ = false)
+        {
+            var ret = new JArray();
+            foreach(var chunk in c)
+            {
+                ret.Add(
+                    JToken.FromObject(chunk)
+                );
+            }
+            return ret;
+        }
         public static JToken ToJToken(this List<ChatCommand> c, bool _ = false)
         {
             var ret = JArray.Parse("[ \"" + string.Join("\", \"", c) + "\" ]");

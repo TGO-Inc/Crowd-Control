@@ -1,0 +1,53 @@
+﻿<Window x:Class="CrowdControl.Windows.TimerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CrowdControl.Windows"
+        mc:Ignorable="d"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Timers"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Background="#01FFFFFF"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        ShowInTaskbar="True"
+        Closing="UiWindow_Closing"
+        Loaded="Window_Loaded"
+        SizeChanged="Window_SizeChanged"
+        SizeToContent="WidthAndHeight">
+    <Border Background="#D8000000" x:Name="Master" VerticalAlignment="Top" HorizontalAlignment="Left" CornerRadius="0,20,20,20" Padding="2">
+        <Grid>
+            <ui:TitleBar
+                FontSize="20"
+                ShowMinimize="False"
+                ShowMaximize="False"
+                Height="30"
+                
+                Grid.Row="0">
+            </ui:TitleBar>
+            <TextBlock Text="Timers" Foreground="White" Margin="10,5,10,10" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <WrapPanel x:Name="Container" Margin="10,25,10,10">
+
+
+            </WrapPanel>
+            <!--
+            <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0">
+                <Grid HorizontalAlignment="Left">
+                    <ui:ProgressRing Progress="25" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <ui:ProgressRing.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform Angle="270" CenterX="30" CenterY="30"/>
+                                <ScaleTransform ScaleX="-1" CenterX="30"/>
+                            </TransformGroup>
+                        </ui:ProgressRing.RenderTransform>
+                    </ui:ProgressRing>
+                    <TextBlock Text="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="25"/>
+                </Grid>
+                <TextBlock Margin="70,0,0,0" Text="Example Timer" VerticalAlignment="Center" FontSize="30"/>
+            </Grid>
+            -->
+        </Grid>
+    </Border>
+</Window>

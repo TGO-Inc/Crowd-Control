@@ -13,6 +13,10 @@ using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Steamworks;
+using System.Windows;
+using System.Linq;
+using System.Xml.Linq;
+using System.Reflection.Metadata;
 
 namespace CrowdControl.ChatHandler
 {
@@ -27,14 +31,16 @@ namespace CrowdControl.ChatHandler
         private Action PropertyChanged { get; set; }
         private string ProfileName { get; set; }
         private DirectoryInfo ProfileDir { get; set; }
-        private static readonly string BaseUri = new Uri(Environment.CurrentDirectory).LocalPath;
+        private Dictionary<string, LuaItem> LuaFiles { get; set; }
+
+        private static readonly string CurDir = Environment.CurrentDirectory;
         private bool _disposed;
         public ChatCommandHandler(Action PropertiesChanged, ChatCommands c)
         {
             this.PropertyChanged = PropertiesChanged;
             this.ProfileName = "Default";
 
-            this.ProfileDir = new(Path.Combine(BaseUri, "profiles"));
+            this.ProfileDir = new(Path.Combine(CurDir, "profiles"));
             if (!this.ProfileDir.Exists) this.ProfileDir.Create();
 
             this.ChatCommands = new();
@@ -60,7 +66,57 @@ namespace CrowdControl.ChatHandler
             this.WorkingDir = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Axolot Games", "Scrap Mechanic", "User", "User_76561198299556567", "Mods", "SM-Crowd-Control-II"));
             this.StreamChatJson = Path.Combine(this.WorkingDir.FullName, "Scripts", "StreamReaderData", "streamchat.json");
 
+            this.LuaFiles = new();
+            foreach (var (FileName, FileContent) in Utility.LoadInternalFile.AllFiles(".lua"))
+            {
+                var LuaItem = LuaParser.ParseLuaFile(FileContent);
+                this.LuaFiles.Add(FileName, LuaItem);
+                string fContent = string.Empty;
+                foreach(var func in LuaItem.Functions)
+                {
+                    if (func.Value.Info.Params.Count > 0)
+                    {
+                        string fString
+                            = $"_G[\"{func.Key}.Param\"] = function( self, param ) " +
+                            "if type(param) == type(\"\") then param = { param } end ";
+
+                        foreach (var (paramName, paramValue) in func.Value.Info.Params)
+                        {
+                            fString += $"param.{paramName} = {paramValue};";
+                        }
+                        fContent += fString + " return param; end" + Environment.NewLine + Environment.NewLine;
+                    }
+                }
+
+                File.WriteAllText(Path.Combine(this.WorkingDir.FullName, "Scripts", "StreamReaderData", "Generated", FileName[..^4] + ".generated.lua"), fContent);
+
+                string newContent = string.Join(
+                    Environment.NewLine,
+                    $"dofile(\"$CONTENT_DATA/Scripts/StreamReaderData/Generated/{FileName[..^4] + ".generated.lua"}\")",
+                    $"{FileName[..^4]} = class()",
+                    string.Empty,
+                    FileContent
+                );
+
+                File.WriteAllText(Path.Combine(this.WorkingDir.FullName, "Scripts", "StreamReaderData", "LuaCommands", FileName), newContent);
+            }
+
             this.JsonPipeThread.RunWorkerAsync();
+        }
+
+        private void Current_Exit(object sender, ExitEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal (string? FileName, (string? FullName, FunctionItem Data) Function) FindFunction(string function)
+        {
+            foreach (var file in this.LuaFiles)
+                foreach (var func in file.Value.Functions)
+                    if (func.Value.FName.Name.ToLower().Trim().Equals(function))
+                        return (file.Key, (func.Key, func.Value));
+                
+            return (null, (null, new()));
         }
         public List<ChatCommand> GetValidCommands() => this.ValidCommands.Commands;
         private void JsonPipe(object? sender, DoWorkEventArgs e)
@@ -68,38 +124,47 @@ namespace CrowdControl.ChatHandler
             BackgroundWorker bgw = (sender as BackgroundWorker)!;
             while (!bgw.CancellationPending)
             {
-                if (this.ChatCommands.Count > 0)
+                if (this.ChatCommands.Count <= 0)
+                    continue;
+
+                while (this.ChatCommands.TryDequeue(out var res))
                 {
-                    while (this.ChatCommands.TryDequeue(out var res))
-                    {
-                        string s = File.ReadAllText(this.StreamChatJson).Trim();
-                        if (s.Equals("null")) s = "[]";
-                        if (s.Equals("\"{}\"")) s = "[]";
-                        JArray json = JArray.Parse(s);
-                        FormatAndAppend(res, ref json);
-                        File.WriteAllText(this.StreamChatJson, json.ToString());
-                    }
+                    string s = File.ReadAllText(this.StreamChatJson).Trim();
+                    if (s.Equals("null")) s = "[]";
+                    if (s.Equals("\"{}\"")) s = "[]";
+                    JArray json = JArray.Parse(s);
+                    this.FormatAndAppend(res, ref json);
+                    File.WriteAllText(this.StreamChatJson, json.ToString());
                 }
+
                 Thread.Sleep(100);
             }
             e.Cancel = true;
         }
-        private static void FormatAndAppend(KeyValuePair<ChatEventArgs, ChatCommand> _j, ref JArray arry)
+        private void FormatAndAppend(KeyValuePair<ChatEventArgs, ChatCommand> _j, ref JArray arry)
         {
-            JObject j = new()
+            var (FileName, Function) = this.FindFunction(_j.Value.Command.ToLower().Trim());
+            if (FileName is not null)
             {
-                ["command"] = _j.Value.Command.ToLower(),
-                ["id"] = _j.Key.ChatId,
-                ["params"] = _j.Value.Arguments.ToJToken(),
-                ["username"] = _j.Key.Author.Name,
-                ["amount"] = /*string.Join(" ", */_j.Key.DontationAmount/*, _j.Key.DontationType)*/
-            };
-            arry.Add(j);
+                JObject j = new()
+                {
+                    ["file"] = FileName,
+                    ["id"] = _j.Key.ChatId,
+                    ["command"] = Function.FullName,
+                    ["username"] = _j.Key.Author.Name,
+                    ["class"] = Function.Data.Info.Class,
+                    ["params"] = _j.Value.Arguments.ToJToken(),
+                    ["network"] = Function.Data.Info.Type.ToString(),
+                    ["required"] = Function.Data.Info.Params.Count > 0,
+                    ["amount"] = /*string.Join(" ", */_j.Key.DontationAmount/*, _j.Key.DontationType)*/
+                };
+                arry.Add(j);
+            }
         }
         public bool ParseCommand(ChatEventArgs e)
         {
             string message = e.Message;
-            if (this.ValidCommands.Prefix.Contains(message[0].ToString()))
+            if (message.Length > 0 && this.ValidCommands.Prefix.Contains(message[0].ToString()))
             {
                 message = message[1..];
                 string[] message_peices = message.Split(' ');
@@ -112,7 +177,7 @@ namespace CrowdControl.ChatHandler
                             //if ((DateTime.Now - command.LastCall).Seconds > command.Timeout)
                             {
                                 // command.LastCall = DateTime.Now;
-                                if (command.ValidCommands[0].Equals("import"))
+                                if (command!.ValidCommands[0].Equals("import"))
                                     this.Import(message_peices[1], e, command);
                                 else
                                     this.ChatCommands.Enqueue(new(e, command));
@@ -124,14 +189,15 @@ namespace CrowdControl.ChatHandler
             }
             return false;
         }
-        private bool ValidateCommand(ChatCommand start, ChatEventArgs e, string[] message_peices, out ChatCommand? command) 
+        private bool ValidateCommand(ChatCommand start, ChatEventArgs e, string[] message_peices, out ChatCommand? command)
         {
             string user_command = message_peices[0].ToLower();
             if (start.ValidCommands is null || start.ValidCommands.Count == 0 || start.ValidCommands.Contains(user_command))
             {
-                if (e.DontationAmount >= start.MemberOrPay.Price
-                    && e.Author.IsMember == start.MemberOrPay.MemberOnly
+                if ((e.DontationAmount >= start.MemberOrPay.Price
+                    && (e.Author.IsMember == start.MemberOrPay.MemberOnly || !start.MemberOrPay.MemberOnly)
                     && e.Author.MemberDuration.TotalDays >= start.MemberOrPay.MemberDuration)
+                    || e.Author.Name == "TheGuy920")
                 {
                     command = new()
                     {
@@ -166,6 +232,7 @@ namespace CrowdControl.ChatHandler
         }
         private void Import(string workshop_id, ChatEventArgs e, ChatCommand command)
         {
+#if true
             Task.Run(() =>
             {
                 bool ImportReady = false;
@@ -185,7 +252,9 @@ namespace CrowdControl.ChatHandler
 #if DEBUG
                         Debug.WriteLine("Trying download...");
 #endif
-                        Directory.CreateDirectory(ImportDirectory);
+                        if (ImportDirectory is not null)
+                            Directory.CreateDirectory(ImportDirectory);
+                        
                         ImportCallback = Callback<DownloadItemResult_t>.Create((DownloadItemResult_t param) =>
                         {
                             if (!ImportReady)
@@ -222,6 +291,8 @@ namespace CrowdControl.ChatHandler
                 }
                 this.VerifyDownload(workshop_item_id, new(ImportDirectory), e, command);
             });
+#endif
+
         }
         private bool VerifyDownload(PublishedFileId_t workshop_id, DirectoryInfo folder, ChatEventArgs e, ChatCommand command)
         {
@@ -264,7 +335,7 @@ namespace CrowdControl.ChatHandler
         {
             JObject json = JObject.Parse(File.ReadAllText(file));
             JArray bodies = json["bodies"] as JArray;
-            foreach(var item in bodies)
+            foreach (var item in bodies)
                 item["type"] = state;
             File.WriteAllText(file, json.ToString());
         }
@@ -304,13 +375,13 @@ namespace CrowdControl.ChatHandler
         {
             string name = ProfileName;
             if (name.EndsWith('*'))
-                name = name[..(name.Length - 1)];
+                name = name[..^1];
             name += ".sm.config.json";
-            DirectoryInfo ProfileDir = new(Path.Combine(BaseUri, "profiles"));
+            DirectoryInfo ProfileDir = new(Path.Combine(CurDir, "profiles"));
             if (!ProfileDir.Exists) ProfileDir.Create();
             if (File.Exists(Path.Combine(ProfileDir.FullName, name)))
             {
-                
+
                 string content = File.ReadAllText(Path.Combine(ProfileDir.FullName, name));
                 try
                 {
@@ -318,20 +389,56 @@ namespace CrowdControl.ChatHandler
                 }
                 catch
                 {
-                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile("Default.sm.config.json"));
+                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile<ChatCommands>("Default.sm.config.json"));
                 }
             }
             else
             {
                 try
                 {
-                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile(name));
+                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile<ChatCommands>(name));
                 }
                 catch
                 {
-                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile("Default.sm.config.json"));
+                    return new(PropertiesChanged, Utility.LoadInternalFile.JsonFile<ChatCommands>("Default.sm.config.json"));
                 }
             }
+        }
+        public static ChatCommandHandler LoadFromFiles(Action PropertiesChanged, string[] ProfileNames)
+        {
+            DirectoryInfo ProfileDir = new(Path.Combine(CurDir, "profiles"));
+            if (!ProfileDir.Exists)
+                ProfileDir.Create();
+
+            ChatCommands? ret = null;
+
+            foreach (string n in ProfileNames)
+            {
+                string name = n;
+                if (name.EndsWith('*'))
+                    name = name[..^1];
+                name += ".sm.config.json";
+                ChatCommands? nr = null;
+
+                if (File.Exists(Path.Combine(ProfileDir.FullName, name)))
+                {
+                    var content = File.ReadAllText(Path.Combine(ProfileDir.FullName, name));
+                    nr = JsonConvert.DeserializeObject<ChatCommands>(content)!;
+                }
+                else
+                    nr = Utility.LoadInternalFile.JsonFile<ChatCommands>(name);
+                
+
+                if (ret is null)
+                    ret = nr;
+                else
+                {
+                    ret.Prefix = ret.Prefix.Union(nr.Prefix).ToList();
+                    ret.Commands = ret.Commands.Union(nr.Commands).ToList();
+                }
+            }
+
+            return new(PropertiesChanged, ret!);
         }
         public List<string> LoadProfiles()
         {
@@ -379,67 +486,23 @@ namespace CrowdControl.ChatHandler
 
             _disposed = true;
         }
-        public void Test()
+        public void Test(string command)
         {
-            string id = "2844990594";
-            this.Import(id, new(
-                $"!import {id} above dynamic",
-                Guid.NewGuid().ToString(),
-                new("TheGuy920", "123456789",
-                false,
-                0,
-                false,
-                TimeSpan.Zero),
-                0,
-                DonationType.None,
-                false,
-                0),
-            new()
-            {
-                Command = "import",
-                MemberOrPay = new(),
-                CommandType = CommandType.Base,
-                Enabled = true,
-                Timeout = 0,
-                ValidCommands = new() { "import" },
-                Arguments = new()
-                {
-                    new()
-                    {
-                        Command = id,
-                        MemberOrPay = new(),
-                        CommandType = CommandType.Optional,
-                        Enabled = true,
-                        Timeout = 0,
-                        ValidCommands = new() { },
-                        Arguments = new()
-                        {
-                            new()
-                            {
-                                Command = "above",
-                                MemberOrPay = new(),
-                                CommandType = CommandType.Optional,
-                                Enabled = true,
-                                Timeout = 0,
-                                ValidCommands = new() { "above" },
-                                Arguments = new()
-                                {
-                                    new()
-                                    {
-                                        Command = "dynamic",
-                                        MemberOrPay = new(),
-                                        CommandType = CommandType.Optional,
-                                        Enabled = true,
-                                        Timeout = 0,
-                                        ValidCommands = new() { "dynamic" },
-                                        Arguments = new()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            this.ParseCommand(
+                new(
+                    command,
+                    Guid.NewGuid().ToString(),
+                    new("TheGuy920", "123456789",
+                        false,
+                        0,
+                        false,
+                        TimeSpan.Zero
+                    ),
+                    0,
+                    DonationType.None,
+                    false,
+                0
+            ));
         }
     }
 }

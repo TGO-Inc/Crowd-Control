@@ -11,7 +11,7 @@
         SizeToContent="WidthAndHeight"
         MinHeight="180" MaxHeight="180"
         MinWidth="500" MaxWidth="500">
-    <Grid>
+    <Grid Background="#01ffffff">
         <Grid Margin="0,50,0,0">
             <Grid>
                 <Grid.RowDefinitions>

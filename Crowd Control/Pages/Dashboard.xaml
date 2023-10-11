@@ -19,13 +19,14 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ui:Card Grid.Row="0">
-                <DockPanel HorizontalAlignment="Left">
-                    <Border CornerRadius="5" BorderThickness="4" BorderBrush="Gold">
-                        <Border BorderThickness="1" BorderBrush="Black">
-                            <Image Width="80" Height="80" x:Name="Avatar"/>
+                <Grid>
+                    <DockPanel HorizontalAlignment="Left">
+                        <Border CornerRadius="5" BorderThickness="4" BorderBrush="Gold">
+                            <Border BorderThickness="1" BorderBrush="Black">
+                                <Image Width="80" Height="80" x:Name="Avatar"/>
+                            </Border>
                         </Border>
-                    </Border>
-                    <TextBlock
+                        <TextBlock
                         x:Name="SteamName"
                         MinWidth="160"
                         Padding="25,0"
@@ -33,7 +34,39 @@
                         FontSize="48"
                         TextAlignment="Center"
                         VerticalAlignment="Center"/>
-                </DockPanel>
+                    </DockPanel>
+                    <DockPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-10">
+                        <ui:Button
+                            Width="30"
+                            Height="28"
+                            Margin="0,0,10,0"
+                            Background="{Binding}"
+                            Click="LaunchGame"
+                            Appearance="Info"
+                            IsEnabled="True">
+                            <ui:SymbolIcon
+                                Margin="-10"
+                                FontSize="25"
+                                IsEnabled="True"
+                                Foreground="LightBlue"
+                                Symbol="Games48"/>
+                        </ui:Button>
+                        <ui:Button
+                            Width="30"
+                            Height="28"
+                            Background="{Binding}"
+                            Click="PopoutTimers"
+                            Appearance="Info"
+                            IsEnabled="True">
+                            <ui:SymbolIcon
+                                Margin="-10"
+                                FontSize="25"
+                                IsEnabled="True"
+                                Foreground="LightBlue"
+                                Symbol="TvArrowRight20"/>
+                        </ui:Button>
+                    </DockPanel>
+                </Grid>
             </ui:Card>
 
             <DockPanel Grid.Row="1">
@@ -53,9 +86,10 @@
                                 BorderThickness="1" BorderBrush="#11FFFFFF"
                                 ToolTip="Not linked to stream">
                             <ui:SymbolIcon
-                                FontSize="20"
+                                Margin="-10"
+                                FontSize="25"
                                 IsEnabled="False"
-                                Foreground="Red"
+                                Foreground="#FFFF7500"
                                 Symbol="ErrorCircle24"/>
                         </Border>
                         <ui:Button
@@ -86,7 +120,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0">
-                    <TextBlock Text="Filter" VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="10"/>
+                    <TextBlock Text="Search" VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="10"/>
                     <ui:TextBox Margin="5,0" FontSize="18"/>
                 </DockPanel>
                 <Grid Grid.Column="1">
@@ -95,19 +129,19 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Chat Reader" Foreground="White" VerticalAlignment="Center" FontSize="24" Margin="10"/>
-                    
-                    <ToggleButton x:Name="EnableReadChat" Grid.Column="1" Height="42" Width="60" VerticalAlignment="Center"
-                                  Background="Transparent"
-                                  Margin="0" Checked="EnableChatReader" Unchecked="DisableChatReader">
-                        <Grid>
-                            <ui:SymbolIcon x:Name="GameConnectStatus" FontSize="30" Margin="3.25,-1.5" HorizontalAlignment="Center" Symbol="ErrorCircle24" Foreground="Red"/>
+
+                    <ui:Button x:Name="EnableReadChat" Grid.Column="1" Height="40" Width="40" VerticalAlignment="Center"
+                                  Background="Transparent" Click="EnableReadChat_Click"
+                                  Margin="0" Appearance="Success">
+                        <Grid Margin="-10, -10, -10, -11">
+                            <ui:SymbolIcon x:Name="GameConnectStatus" FontSize="25" Margin="3.25,-1.5" HorizontalAlignment="Center" Symbol="ErrorCircle24" Foreground="#FFFF7A3C"/>
                             <ui:ProgressRing Margin="-20" IsIndeterminate="True" Visibility="Collapsed" x:Name="GameConnectLoading">
                                 <ui:ProgressRing.RenderTransform>
                                     <ScaleTransform ScaleX="0.42" ScaleY="0.42" CenterX="30.25" CenterY="30.75"/>
                                 </ui:ProgressRing.RenderTransform>
                             </ui:ProgressRing>
                         </Grid>
-                    </ToggleButton>
+                    </ui:Button>
                 </Grid>
                 <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
@@ -137,15 +171,20 @@
                                Visibility="Visible"
                                Appearance="Info" x:Name="LoadProfileButton"
                                Click="LoadProfile"
+                               ToolTip="Load Profile"
                                HorizontalAlignment="Right" Icon="Notebook32" FontSize="20" Width="40" Height="40" Background="{Binding}"/>
                     <ui:Button Margin="5" Grid.Column="2"
                                Appearance="Success"
                                Click="SaveProfile"
+                               ToolTip="Save Profile"
                                HorizontalAlignment="Right" Icon="Save28" FontSize="20" Width="40" Height="40" Background="{Binding}"/>
                     <ui:Button Margin="5" Grid.Column="4"
                                Appearance="Danger"
                                Click="DeleteProfile"
-                               HorizontalAlignment="Right" Content="X" Foreground="Red" FontSize="20" Width="40" Height="40" Background="{Binding}"/>
+                               ToolTip="Delete Profile"
+                               HorizontalAlignment="Right" Foreground="#FFFF7A3C" FontSize="25" Width="40" Height="40" Background="{Binding}">
+                        <TextBlock Margin="-5" FontFamily="Comic Sans MS" Foreground="#FFFF7500">X</TextBlock>
+                    </ui:Button>
                 </Grid>
             </Grid>
             <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="2" CornerRadius="10,10,0,0" Background="#FF0D0C0E">
@@ -155,14 +194,21 @@
                         Padding="0" PanningMode="VerticalOnly"
                         Background="White" Height="Auto">
                     <WrapPanel x:Name="CommandWrap">
-                        
+
                     </WrapPanel>
                 </ScrollViewer>
             </Border>
-            <Grid Grid.Row="3" x:Name="MovingContainer">
-                
+            <Grid Grid.Row="4" x:Name="MovingContainer" HorizontalAlignment="Stretch">
+                <StackPanel Grid.Row="4" Orientation="Vertical">
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="10" Text="TheGuy920 :"/>
+                        <ui:TextBox x:Name="TestCommandField" FontSize="18" Height="50" Margin="0" Padding="12"/>
+                    </DockPanel>
+                    <ui:Button Click="Button_Click" Content="Test" Height="50" HorizontalAlignment="Stretch"/>
+                </StackPanel>
             </Grid>
-            </Grid>
+            
+        </Grid>
         <ui:Card x:Name="MovingCardShadow" Margin="20,20,0,0" Visibility="Collapsed"
                          VerticalAlignment="Top" HorizontalAlignment="Left"
                          Background="#3F060606" MouseDown="Card_MouseDown" MouseUp="Card_MouseUp">

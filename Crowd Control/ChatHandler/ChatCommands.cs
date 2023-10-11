@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using StreamingServices.Chat;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using CrowdControl.Extensions;
 using Wpf.Ui.Controls;
 using System.Windows.Controls;
@@ -10,13 +6,16 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 using System.Windows.Input;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TextBox = Wpf.Ui.Controls.TextBox;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+using StreamingServices.Chat;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace CrowdControl.ChatHandler
 {
@@ -112,6 +111,7 @@ namespace CrowdControl.ChatHandler
             this.Arguments = new();
             this.ValidCommands = new();
             Application.Current.Dispatcher.Invoke(() => { this.Self = new(); });
+            this.Self ??= new();
         }
         public override string ToString()
         {
@@ -161,12 +161,12 @@ namespace CrowdControl.ChatHandler
             };
             StackPanel MainStack = new() { Margin = StackMargin };
             DockPanel CommandInfo = new() { Margin = S2tackMargin };
-            CommandInfo.Children.Add(new TextBlock() { Text = (this.SelfLevel + 1).ToString(), Margin = new(10, 10, 0, 0) });
+            //CommandInfo.Children.Add(new TextBlock() { Text = (this.SelfLevel + 1).ToString() + " -", Margin = new(10, 10, 0, 0) });
             TextBlock CommandName = new()
             {
                 Text = this.Command.CapitilzeFirst(),
-                Foreground = Brushes.Pink,
-                Margin = new(10)
+                Foreground = this.Enabled ? Brushes.LimeGreen : Brushes.Red,
+                Margin = new(5,10,10,10)
             };
             ToggleSwitch CommandSwitch = new()
             {
@@ -178,9 +178,10 @@ namespace CrowdControl.ChatHandler
             CommandInfo.Children.Add(CommandName);
             CommandInfo.Children.Add(CommandSwitch);
             MainStack.Children.Add(CommandInfo);
-            MainStack.Children.Add(Spacer);
-            
-            if (false)
+            //MainStack.Children.Add(Spacer);
+
+#if EXPIRIMENTAL
+            if (true)
             {
                 DockPanel ValidCommands = new();
                 Card ValidCommandsContainer = new() { Margin = S2tackMargin };
@@ -240,6 +241,8 @@ namespace CrowdControl.ChatHandler
                 ValidCommands.Children.Add(ValidCommandsContainer);
                 MainStack.Children.Add(ValidCommands);
             }
+#endif
+#if DETAILS
             DockPanel MemberMode = new();
             ToggleSwitch ToggleMemeberMode = new()
             {
@@ -308,7 +311,9 @@ namespace CrowdControl.ChatHandler
             });
             Timeout.Children.Add(TimeoutNumber);
             MainStack.Children.Add(Timeout);
-            if (this.Arguments is not null && false)
+#endif
+#if EXPIRIMENTAL
+            if (this.Arguments is not null)
             {
                 StackPanel CardContent = new() { Margin = new(-15) };
                 foreach (ChatCommand arg in this.Arguments)
@@ -341,6 +346,8 @@ namespace CrowdControl.ChatHandler
                 g.Children.Add(cardExpander);
                 MainStack.Children.Add(g);
             }
+#endif
+
             this.Self.Width = BaseWidth;
             this.Self.Margin = BaseMargin;
             this.Self.VerticalAlignment = VerticalAlignment.Top;
@@ -350,11 +357,11 @@ namespace CrowdControl.ChatHandler
         }
         private void ValidCommandsChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
-            StackPanel parent = tb.Parent as StackPanel;
+            TextBox tb = (sender as TextBox)!;
+            StackPanel parent = (tb.Parent as StackPanel)!;
             if (tb.Text.Equals("ANY"))
             {
-                parent.Children.Remove(tb);
+                parent!.Children.Remove(tb);
                 DockPanel x = new() { Margin = new(0) };
                 TextBlock h = new()
                 {
@@ -383,7 +390,7 @@ namespace CrowdControl.ChatHandler
             }
             else if (tb.Text.Length == 0)
             {
-                int ind = parent.Children.IndexOf(tb);
+                int ind = parent!.Children.IndexOf(tb);
                 if (parent.Children.Count - 1 > this.ValidCommands.Count)
                     ind--;
                 this.ValidCommands.RemoveAt(ind);
@@ -391,7 +398,7 @@ namespace CrowdControl.ChatHandler
             }
             else
             {
-                int ind = parent.Children.IndexOf(tb);
+                int ind = parent!.Children.IndexOf(tb);
                 if(parent.Children.Count - 1 > this.ValidCommands.Count)
                     ind--;
                 this.ValidCommands[ind] = tb.Text;
@@ -399,9 +406,9 @@ namespace CrowdControl.ChatHandler
         }
         private void RemoveAnyClick(object sender, RoutedEventArgs e)
         {
-            var item = (sender as Wpf.Ui.Controls.Button).Parent as DockPanel;
-            var parent = item.Parent as StackPanel;
-            parent.Children.Remove(item);
+            var item = (sender as Wpf.Ui.Controls.Button)!.Parent as DockPanel;
+            var parent = item!.Parent as StackPanel;
+            parent!.Children.Remove(item);
             Wpf.Ui.Controls.Button AddCommand = new()
             {
                 Content = "+",
@@ -414,8 +421,8 @@ namespace CrowdControl.ChatHandler
         }
         private void AddCommandClick(object sender, RoutedEventArgs e)
         {
-            Wpf.Ui.Controls.Button bb = sender as Wpf.Ui.Controls.Button;
-            StackPanel parent = bb.Parent as StackPanel;
+            Wpf.Ui.Controls.Button bb = (sender as Wpf.Ui.Controls.Button)!;
+            StackPanel parent = (bb.Parent as StackPanel)!;
             TextBox tb = new()
             {
                 Text = string.Empty,
@@ -438,7 +445,7 @@ namespace CrowdControl.ChatHandler
                 var decimalRegex = new Regex(DecimalRegex);
                 if (decimalRegex.IsMatch(key))
                 {
-                    int start = nb.CaretIndex;
+                    int start = nb!.CaretIndex;
                     int v = Math.Max(nb.CaretIndex - 1, 0);
                     int pI = nb.Text.IndexOf('.');
                     if (pI >= 0)
@@ -467,7 +474,7 @@ namespace CrowdControl.ChatHandler
             }
             else if (IndexResetKeys.Contains(e.Key))
             {
-                if (nb.SelectedText.Length > 0)
+                if (nb!.SelectedText.Length > 0)
                 {
                     int c = nb.CaretIndex;
                     nb.Text = nb.Text[..nb.SelectionStart] + nb.Text[(nb.SelectionStart + nb.SelectedText.Length)..];
@@ -490,18 +497,20 @@ namespace CrowdControl.ChatHandler
         }
         private void CommandEnabledChanged(object sender, RoutedEventArgs e)
         {
-            this.Enabled = (sender as ToggleSwitch)?.IsChecked == true;
-            if (callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
+            var sw = (sender as ToggleSwitch)!;
+            this.Enabled = sw.IsChecked == true;
+            ((sw.Parent as DockPanel)!.Children[0] as TextBlock)!.Foreground = this.Enabled ? Brushes.LimeGreen : Brushes.Red;
+            if (this.callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
         }
         private void MemeberModeChanged(object sender, RoutedEventArgs e)
         {
             this.MemberOrPay.MemberOnly = (sender as ToggleSwitch)?.IsChecked == true;
-            if (callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
+            if (this.callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
         }
         private void PriceChanged(object sender, TextChangedEventArgs e)
         {
             this.MemberOrPay.Price = (sender as NumberBox)?.Value ?? 0;
-            if(callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
+            if(this.callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
         }
         public void RegisterOnPropertyChangedCallback(Action callback)
         {
@@ -516,7 +525,7 @@ namespace CrowdControl.ChatHandler
                 var decimalRegex = new Regex(IntRegex);
                 if (decimalRegex.IsMatch(key))
                 {
-                    int v = nb.CaretIndex;
+                    int v = nb!.CaretIndex;
                     nb.Text = nb.Text[..Math.Max(v, 0)] + key + nb.Text[Math.Max(v, 0)..];
                     nb.CaretIndex = Math.Max(v + 1, 0);
                     e.Handled = true;
@@ -524,7 +533,7 @@ namespace CrowdControl.ChatHandler
             }
             else if (IndexResetKeys.Contains(e.Key))
             {
-                if (nb.SelectedText.Length > 0)
+                if (nb!.SelectedText.Length > 0)
                 {
                     int c = nb.CaretIndex;
                     nb.Text = nb.Text[..nb.SelectionStart] + nb.Text[(nb.SelectionStart + nb.SelectedText.Length)..];
@@ -548,7 +557,7 @@ namespace CrowdControl.ChatHandler
         private void TimeoutChanged(object sender, TextChangedEventArgs e)
         {
             this.Timeout = (int)((sender as NumberBox)?.Value ?? 0);
-            if (callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
+            if (this.callback is not null && this.InitSelf) Task.Run(this.callback.Invoke);
         }
     }
     public class ChatCommands

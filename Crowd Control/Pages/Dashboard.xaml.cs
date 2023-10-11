@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using Brushes = System.Windows.Media.Brushes;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CrowdControl.Windows;
+using System.IO;
 
 namespace CrowdControl.Pages
 {
@@ -28,6 +30,8 @@ namespace CrowdControl.Pages
         private bool ShowInfo = false;
         private bool IsLoadingProfile = true;
         private bool CanReadChat = false;
+        private TimerView? TimersWindow { get; set; }
+        private ChatReader? Reader {  get; set; }
         #region CardHandler
         private Card? MovingCard;
         private System.Windows.Point Offset;
@@ -37,8 +41,8 @@ namespace CrowdControl.Pages
         public Dashboard()
         {
             InitializeComponent();
-
-            this.ChatCommandHandler = ChatCommandHandler.LoadFromFile(PropertiesChanged, "Default");
+            
+            this.ChatCommandHandler = ChatCommandHandler.LoadFromFiles(PropertiesChanged, new[] { "Default", "SaltySeraph" });
 
             if (this.ChatCommandHandler is null)
                 throw new Exception("Failed to load commands");
@@ -46,7 +50,7 @@ namespace CrowdControl.Pages
             foreach (ChatCommand e in this.ChatCommandHandler.GetValidCommands())
                 this.BuildCards(e);
 
-            foreach(string profile in this.ChatCommandHandler.LoadProfiles())
+            foreach (string profile in this.ChatCommandHandler.LoadProfiles())
                 this.ProfileComboBox.Items.Insert(this.ProfileComboBox.Items.Count - 1, new ComboBoxItem() { Content = profile });
 
             this.SteamName.Text = this.ChatCommandHandler.SteamHandler.UserName;
@@ -70,17 +74,19 @@ namespace CrowdControl.Pages
         }
         private void UpdateUrl(object sender, RoutedEventArgs e)
         {
-            Wpf.Ui.Controls.TextBox a = (VisualTreeHelper.GetParent(VisualTreeHelper.GetParent((DependencyObject)sender)) as Grid).Children[0] as Wpf.Ui.Controls.TextBox;
+            Wpf.Ui.Controls.TextBox a = ((VisualTreeHelper.GetParent(VisualTreeHelper.GetParent((DependencyObject)sender)) as Grid)!.Children[0] as Wpf.Ui.Controls.TextBox)!;
             this.ReadChat(a?.Text ?? "");
         }
         private void ReadChat(string video_id)
         {
-            ChatReader chatreader = new();
-            chatreader.ChatLoaded += ChatLoaded;
-            chatreader.ChatEvent += ChatEvent;
-            chatreader.AddYoutubeStream(video_id);
+            this.Reader?.Dispose();
+
+            this.Reader = new();
+            this.Reader.ChatLoaded += ChatLoaded;
+            this.Reader.ChatEvent += ChatEvent;
+            this.Reader.AddYoutubeStream(video_id);
             this.StreamStatus.ToolTip = "Connecting...";
-            this.StreamStatus.Child = new ProgressRing() 
+            this.StreamStatus.Child = new ProgressRing()
             {
                 IsIndeterminate = true,
                 LayoutTransform = new ScaleTransform() { ScaleX = 0.3, ScaleY = 0.3 }
@@ -88,13 +94,19 @@ namespace CrowdControl.Pages
         }
         private void ChatEvent(ChatEventArgs e)
         {
-            if(this.CanReadChat) this.ChatCommandHandler.ParseCommand(e);
+            if (this.CanReadChat)
+            {
+                Debug.WriteLine(e.Message);
+                this.ChatCommandHandler.ParseCommand(e);
+            }
         }
         private void ChatLoaded(ChatLoadedArgs e)
         {
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 this.StreamStatus.ToolTip = "Connected to Stream";
-                this.StreamStatus.Child = new SymbolIcon() { 
+                this.StreamStatus.Child = new SymbolIcon()
+                {
                     Symbol = Wpf.Ui.Common.SymbolRegular.CheckboxChecked24,
                     FontSize = 20,
                     IsEnabled = false,
@@ -109,14 +121,14 @@ namespace CrowdControl.Pages
         private void SaveProfile(object sender, RoutedEventArgs e)
         {
             var item = this.ProfileComboBox.SelectedItem as ComboBoxItem;
-            
-            if (item.Tag is not null)
+
+            if (item!.Tag is not null)
             {
-                if (item.Tag.ToString().Equals("Default"))
+                if (item.Tag.ToString()!.Equals("Default"))
                 {
                     List<string> t = new();
                     foreach (var p in this.ProfileComboBox.Items)
-                        t.Add((p as ComboBoxItem).Content.ToString());
+                        t.Add((p as ComboBoxItem)!.Content.ToString()!);
                     string? profile_name = new NewProfileWindow(t).CreateNewProfile();
                     if (profile_name is not null)
                     {
@@ -127,9 +139,9 @@ namespace CrowdControl.Pages
                 }
             }
 
-            string s = item.Content.ToString();
-            if (s.EndsWith("*")) item.Content = s[..(s.Length-1)];
-            this.ChatCommandHandler.SetProfileName(item.Content.ToString());
+            string s = item.Content.ToString()!;
+            if (s.EndsWith("*")) item.Content = s[..(s.Length - 1)];
+            this.ChatCommandHandler.SetProfileName(item.Content.ToString()!);
             this.ChatCommandHandler.SaveToFile();
         }
         private void BuildCards(ChatCommand e)
@@ -150,14 +162,18 @@ namespace CrowdControl.Pages
                 this.LoadProfileButton.Visibility = Visibility.Collapsed;
                 this.LoadingProfile.Visibility = Visibility.Visible;
             });
-            string s = (this.ProfileComboBox.SelectedItem as ComboBoxItem).Content.ToString();
-            Task.Factory.StartNew(() =>
+            string s = (this.ProfileComboBox.SelectedItem as ComboBoxItem)!.Content.ToString()!;
+            
+            if (this.TimersWindow is not null)
+                this.TimersWindow.ClearTimers();
+
+            Task.Factory.StartNew(async () =>
             {
                 ReadOnlyCollection<ChatCommand> l;
                 lock (this.ChatCommandHandler)
                 {
                     this.ChatCommandHandler = ChatCommandHandler.LoadFromFile(PropertiesChanged, s);
-                    this.Dispatcher.Invoke(()=> { this.CommandWrap.Children.Clear(); });
+                    this.Dispatcher.Invoke(() => { this.CommandWrap.Children.Clear(); });
                     this.ChatCommandHandler.SetProfileName(s);
                     l = this.ChatCommandHandler.GetValidCommands().AsReadOnly();
                 }
@@ -165,17 +181,19 @@ namespace CrowdControl.Pages
                 {
                     var t = this.CommandWrap.Dispatcher.BeginInvoke(() => { this.BuildCards(k); });
                     t.Priority = System.Windows.Threading.DispatcherPriority.Background;
-                    Task.Delay(100).Wait();
+                    if (this.TimersWindow is not null)
+                        this.TimersWindow.AddTimer(k.Command, k.Timeout, k.Enabled);
+                    await Task.Delay(100);
                 }
-                Task.Delay(100).Wait();
-                this.Dispatcher.BeginInvoke(() =>
+                await Task.Delay(100);
+                await this.Dispatcher.BeginInvoke(() =>
                 {
                     this.LoadProfileButton.Visibility = Visibility.Visible;
                     this.LoadingProfile.Visibility = Visibility.Collapsed;
-                    if(prev_state) this.EnableChatReader(null, null);
+                    if (prev_state) this.EnableChatReader(null, null);
                     this.EnableReadChat.IsEnabled = true;
-                }).Wait();
-                Task.Delay(250).Wait();
+                });
+                await Task.Delay(250);
                 this.IsLoadingProfile = false;
             });
         }
@@ -184,14 +202,14 @@ namespace CrowdControl.Pages
             if (e.AddedItems.Count > 0)
             {
                 var item = e.AddedItems[0] as ComboBoxItem;
-                if (item.Tag is not null)
+                if (item!.Tag is not null)
                 {
                     if (item.Tag.Equals("New"))
                     {
                         this.ProfileComboBox.SelectedItem = e.RemovedItems[0];
                         List<string> s = new();
                         foreach (var p in this.ProfileComboBox.Items)
-                            s.Add((p as ComboBoxItem).Content.ToString());
+                            s.Add((p as ComboBoxItem)!.Content.ToString()!);
                         string? profile_name = new NewProfileWindow(s).CreateNewProfile();
                         if (profile_name is not null)
                         {
@@ -209,20 +227,29 @@ namespace CrowdControl.Pages
                 if (!this.IsLoadingProfile)
                 {
                     var item = this.ProfileComboBox.SelectedItem as ComboBoxItem;
-                    if (item.Tag is not null) if (item.Tag.ToString().Equals("Default")) return;
-                    string s = item.Content.ToString();
+                    if (item!.Tag is not null) if (item.Tag.ToString()!.Equals("Default")) return;
+                    string s = item.Content.ToString()!;
                     if (!s.EndsWith("*")) item.Content = s + "*";
                 }
             });
+
+            if (this.TimersWindow is null)
+                return;
+
+            foreach (var command in this.ChatCommandHandler.GetValidCommands())
+                if (command.Enabled)
+                    this.TimersWindow.EnableTimer(command.Command);
+                else
+                    this.TimersWindow.DisableTimer(command.Command);
         }
         private void DeleteProfile(object sender, RoutedEventArgs e)
         {
             var item = this.ProfileComboBox.SelectedItem as ComboBoxItem;
-            if (item.Tag is not null) if (item.Tag.Equals("New") || item.Tag.Equals("Default")) return;
+            if (item!.Tag is not null) if (item.Tag.Equals("New") || item.Tag.Equals("Default")) return;
             if (new ConfirmDelete().ConfirmDeletion())
             {
                 int ind = this.ProfileComboBox.SelectedIndex - 1;
-                this.ChatCommandHandler.SetProfileName(item.Content.ToString());
+                this.ChatCommandHandler.SetProfileName(item.Content.ToString()!);
                 this.ChatCommandHandler.DeleteFile();
                 this.ProfileComboBox.Items.Remove(item);
                 this.ProfileComboBox.SelectedIndex = ind;
@@ -233,41 +260,50 @@ namespace CrowdControl.Pages
             this.GameConnectStatus.Visibility = Visibility.Collapsed;
             //this.GameConnectStatus.Symbol = Wpf.Ui.Common.SymbolRegular.CheckboxChecked24;
             //this.GameConnectStatus.Foreground = Brushes.Green;
-            this.GameConnectLoading.Visibility= Visibility.Visible;
+            this.GameConnectLoading.Visibility = Visibility.Visible;
             this.CanReadChat = true;
         }
         private void DisableChatReader(object sender, RoutedEventArgs e)
         {
             this.GameConnectStatus.Symbol = Wpf.Ui.Common.SymbolRegular.ErrorCircle24;
             this.GameConnectStatus.Foreground = Brushes.Red;
+            this.GameConnectStatus.Visibility = Visibility.Visible;
+            this.GameConnectLoading.Visibility = Visibility.Collapsed;
             this.CanReadChat = false;
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.ChatCommandHandler.Test();
+            this.ChatCommandHandler.Test(this.TestCommandField.Text);
         }
         private void Card_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.MovingCard = (sender as Card)!;
-            this.MovingCardIndex = this.CommandWrap.Children.IndexOf(this.MovingCard) + 1;
-            this.StartIndex = this.MovingCardIndex - 1;
-            this.Offset = e.MouseDevice.GetPosition(this.MovingCard);
-            if (this.MovingCardShadow.Parent != null)
-                (this.MovingCardShadow.Parent as Panel)!.Children.Remove(this.MovingCardShadow);
-            this.MovingCardShadow.Visibility= Visibility.Visible;
-            
-            var b = (this.MovingCardShadow.Content as Border)!;
-            b.Height = this.MovingCard.ActualHeight - 35;
-            b.Width = this.MovingCard.ActualWidth - 30;
+            if (this.MovingCard is null)
+            {
+                this.MovingCard = (sender as Card)!;
+                this.MovingCardIndex = this.CommandWrap.Children.IndexOf(this.MovingCard) + 1;
+                this.StartIndex = this.MovingCardIndex - 1;
+                this.Offset = e.MouseDevice.GetPosition(this.MovingCard);
+                if (this.MovingCardShadow.Parent != null)
+                    (this.MovingCardShadow.Parent as Panel)!.Children.Remove(this.MovingCardShadow);
+                this.MovingCardShadow.Visibility = Visibility.Visible;
 
-            var p = (this.MovingCard.Content as Panel);
-            p!.Width = p.ActualWidth;
+                var b = (this.MovingCardShadow.Content as Border)!;
+                b.Height = this.MovingCard.ActualHeight - 35;
+                b.Width = this.MovingCard.ActualWidth - 30;
 
-            this.CommandWrap.Children.Insert(this.MovingCardIndex, this.MovingCardShadow);
-            this.CommandWrap.Children.Remove(this.MovingCard);
-            
-            this.MovingCard.HorizontalAlignment = HorizontalAlignment.Left;
-            this.MovingContainer.Children.Add(this.MovingCard);
+                var p = (this.MovingCard.Content as Panel);
+                p!.Width = p.ActualWidth;
+
+                this.CommandWrap.Children.Insert(this.MovingCardIndex, this.MovingCardShadow);
+                this.CommandWrap.Children.Remove(this.MovingCard);
+
+                this.MovingCard.HorizontalAlignment = HorizontalAlignment.Left;
+                this.MovingContainer.Children.Add(this.MovingCard);
+            }
+            else
+            {
+                this.Card_MouseUp(sender, e);
+            }
         }
         private void Card_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -294,18 +330,17 @@ namespace CrowdControl.Pages
         }
         public void InvokeMouseMove(MouseEventArgs e)
         {
-            if (this.MovingCard != null)
+            if (this.MovingCard is not null)
             {
                 var off = e.GetPosition(this.MovingCard);
 
                 double horiz_count = Math.Floor(this.CommandWrap.ActualWidth / this.MovingCard.ActualWidth);
-                double horiz_pos = Math.Floor((this.MovingCard.Margin.Left + (this.MovingCard.ActualWidth/2)) / this.MovingCard.ActualWidth);
+                double horiz_pos = Math.Floor((this.MovingCard.Margin.Left + (this.MovingCard.ActualWidth / 2)) / this.MovingCard.ActualWidth);
 
                 var sv = (this.CommandWrap.Parent as ScrollViewer);
-                double vert_count = Math.Floor(sv.ActualHeight / this.MovingCard.ActualHeight);
-                double vert_pos = Math.Floor((this.MovingCard.Margin.Top + (this.MovingCard.ActualHeight / 2)) / this.MovingCard.ActualHeight);
-                vert_pos += Math.Floor(sv.VerticalOffset / this.MovingCard.ActualHeight);
-
+                // double vert_count = Math.Floor(sv!.ActualHeight / this.MovingCard.ActualHeight);
+                double vert_pos = Math.Floor(this.MovingCard.Margin.Top / this.MovingCard.ActualHeight);
+                vert_pos += Math.Floor(sv!.VerticalOffset / this.MovingCard.ActualHeight);
                 var npos = (vert_pos * horiz_count) + horiz_pos;
                 if (this.MovingCardShadow.Tag != npos.ToString())
                 {
@@ -327,7 +362,7 @@ namespace CrowdControl.Pages
                 nx = Math.Min(this.MovingContainer.ActualWidth - this.MovingCard.ActualWidth, nx);
                 var bottom = this.MovingContainer.ActualHeight - (this.MovingCard.ActualHeight + 1);
                 ny = Math.Min(bottom, ny);
-                
+
                 if (bottom - ny < 5)
                 {
                     //var sv = (this.CommandWrap.Parent as ScrollViewer);
@@ -343,6 +378,46 @@ namespace CrowdControl.Pages
 
                 this.MovingCard.Margin = new(nx, ny, 0, 0);
             }
+        }
+
+        private void PopoutTimers(object sender, RoutedEventArgs e)
+        {
+            if (this.TimersWindow is null)
+            {
+                Dictionary<string, int> timerValues = new();
+                foreach (var command in this.ChatCommandHandler.GetValidCommands())
+                    timerValues.Add(command.Command.ToLower().Trim(), command.Timeout);
+                
+                this.TimersWindow = new(timerValues);
+                this.TimersWindow.Show();
+                this.TimersWindow.Closed += (arg1, arg2) =>
+                {
+                    this.TimersWindow = null;
+                };
+            }
+            else
+            {
+                this.TimersWindow.ResetRandomTimer();
+            }
+        }
+
+        private void EnableReadChat_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.CanReadChat)
+                this.DisableChatReader(sender, e);
+            else
+                this.EnableChatReader(sender, e);
+        }
+
+        private void LaunchGame(object sender, RoutedEventArgs e)
+        {
+            ProcessStartInfo psi = new()
+            {
+                FileName = Path.Combine(this.ChatCommandHandler.SteamHandler.GameDirectory.FullName, ".", "Release", "ScrapMechanic.exe"),
+                WorkingDirectory = Path.Combine(this.ChatCommandHandler.SteamHandler.GameDirectory.FullName, ".", "Release"),
+                Arguments = "-dev --ugc 0ad813dd-f9e5-4ccb-9cec-15fcbab86289"
+            };
+            Process.Start(psi);
         }
     }
 }
